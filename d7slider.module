@@ -30,6 +30,8 @@ function d7slider_menu(){
   /*$items['admin/config/karbunkul/d7slider/add'] = array(
     'title' => t('Add'),
     'access callback' => TRUE,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('d7slider_newslider_form'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 0,
   );*/
@@ -60,34 +62,101 @@ function d7slider_settings_form($form){
   $templates = array();
   
   $templates = db_query('select tid, title from {d7slider_templates}')->fetchAllKeyed();
-  dsm($templates);
+  //dsm($templates);
   
   $form['template'] = array(
     '#type' => 'select',
     '#title' => t('Default template'),
     '#description' => t('Default templates for new slider'),
     '#options' => $templates,
-    '#empty_value' => t('empty'),
-    //'#default_value' => variable_get('d7slider_global_template', array('none')),
+    '#default_value' => variable_get('d7slider_global_template', 'empty'),
   );
   
   $sliders = array();
+  $sliders = db_query('select sid, title from {d7slider_sliders}')->fetchAllKeyed();
   
   $form['slider'] = array(
     '#type' => 'select',
     '#title' => t('Default slider'),
     '#description' => t('Show default slider'),
     '#options' => $sliders,
-    '#empty_value' => t('empty'),
-    //'#default_value' => variable_get('d7slider_global_slider', array('none')),
+    '#default_value' => variable_get('d7slider_global_slider', 'empty'),
   );
   
   $form = system_settings_form($form);
   return $form;
 }
 
+function d7slider_settings_form_validate($form, $state){
+  $template = $state['input']['template'];
+  $slider = $state['input']['slider'];
+  
+  if ( $template == 'empty' ){
+    form_set_error('template', 'необходимо выбрать шаблон');
+  }else{
+    variable_set('d7slider_global_template', $template);
+  }
+}
+
+function d7slider_newslider_form($form){
+  $form = array();
+  
+  $form['common'] = array(
+    '#type' => 'fieldset', 
+    '#title' => t('New slider'), 
+    '#weight' => 0, 
+    '#collapsible' => TRUE, 
+    '#collapsed' => FALSE,
+  );
+  
+  $form['common']['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#required' => TRUE,
+    '#description' => 'Input slider title',
+  );
+  
+  $templates = db_select('d7slider_templates', 't')->fields('t',array('tid','title'))->execute()->fetchAllAssoc('tid');
+  
+  foreach ($templates as $row) {
+    $items[$row->tid] = $row->title;
+  }
+  
+  $form['common']['template'] = array(
+    '#type' => 'select',
+    '#title' => 'Template',
+    '#required' => true,
+    '#options' => $items,
+    '#default_value' => variable_get('d7slider_global_template', 'empty'),
+  );
+  
+  $form = system_settings_form($form);
+  
+  return $form;
+}
+
+
 function page_sliders(){
-  return '123456';
+  // форма добавления нового слайдера
+  $out['new_slider'] = array(
+    drupal_get_form('d7slider_newslider_form'),
+  );
+  // заголовок таблицы
+  $header = array(t('Title'), t('Template'));
+  // данные из бд
+  $rows = db_select('d7slider_sliders', 's')->fields('s', array('title', 'tid'))->execute()->fetchAll();
+  foreach ($rows as $row) {
+    $items[] = array($row->title, $row->tid);
+    //dsm($row);
+  }
+  
+  $out['table'] = array(
+    '#type' => 'markup',
+    '#markup' => theme('table', array('header' => $header, 'rows' => $items )),
+    '#empty' => t('Your table is empty'),
+  );
+  //dsm($out);
+  return $out;
 }
 
 function page_settings(){
