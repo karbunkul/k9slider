@@ -16,6 +16,16 @@ function d7slider_schema(){
       'length' => '64',
       'not null' => TRUE,
     ),
+    'description' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'null' => TRUE,
+    ),
+    'created' => array(
+      'description' => 'Created timestamp',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
     'settings' => array(
       'description' => 'Slider settings',
       'type' => 'blob',
@@ -83,4 +93,23 @@ function d7slider_schema(){
 
   return $schema;
 
+}
+
+/**
+ * Добавление данных в бд по умолчанию
+ */
+function d7slider_update_7003(){
+  $slider = array(
+    'title' => 'Слайдер для главной страницы',
+    'tid' => 1,
+    'created' => REQUEST_TIME,
+    'settings' => '0',
+    'weight' => 0,
+  );
+  $rec = db_insert('d7slider_sliders')->fields($slider)->execute();
+  
+  $template = array(
+    'title' => 'Банер',
+  );
+  $rec = db_insert('d7slider_templates')->fields($template)->execute();
 }
