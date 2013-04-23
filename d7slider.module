@@ -1,0 +1,95 @@
+<?php
+
+function d7slider_menu(){
+  $items = array();
+  
+  $items['admin/config/karbunkul'] = array(
+    'title' => 'Karbunkul',
+    'description' => '',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/config/karbunkul/d7slider'] = array(
+    'title' => 'D7 slider',
+    'description' => 'Slider for Drupal 7',
+    'page callback' => 'page_sliders',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['admin/config/karbunkul/d7slider/default'] = array(
+    'title' => t('Sliders'),
+    'access callback' => TRUE,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
+  /*$items['admin/config/karbunkul/d7slider/add'] = array(
+    'title' => t('Add'),
+    'access callback' => TRUE,
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 0,
+  );*/
+  
+  $items['admin/config/karbunkul/d7slider/settings'] = array(
+    'title' => 'Settings',
+    'description' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('d7slider_settings_form'),
+    'access callback' => TRUE,
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+  );
+  
+  $items['admin/config/karbunkul/d7slider/templates'] = array(
+    'title' => t('Templates'),
+    'type' => MENU_LOCAL_TASK,
+    'access callback' => TRUE,
+    'weight' => 20,
+  );
+  
+  return $items;
+}
+
+function d7slider_settings_form($form){
+  $form = array();
+  
+  $templates = array();
+  
+  $templates = db_query('select tid, title from {d7slider_templates}')->fetchAllKeyed();
+  dsm($templates);
+  
+  $form['template'] = array(
+    '#type' => 'select',
+    '#title' => t('Default template'),
+    '#description' => t('Default templates for new slider'),
+    '#options' => $templates,
+    '#empty_value' => t('empty'),
+    //'#default_value' => variable_get('d7slider_global_template', array('none')),
+  );
+  
+  $sliders = array();
+  
+  $form['slider'] = array(
+    '#type' => 'select',
+    '#title' => t('Default slider'),
+    '#description' => t('Show default slider'),
+    '#options' => $sliders,
+    '#empty_value' => t('empty'),
+    //'#default_value' => variable_get('d7slider_global_slider', array('none')),
+  );
+  
+  $form = system_settings_form($form);
+  return $form;
+}
+
+function page_sliders(){
+  return '123456';
+}
+
+function page_settings(){
+  return 'settings';
+}

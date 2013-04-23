@@ -1,0 +1,86 @@
+<?php
+
+function d7slider_schema(){
+  
+  $schema['d7slider_sliders'] = array(
+  'description' => 'Sliders information',
+  'fields' => array(
+    'sid' => array(
+      'description' => 'Slider ID',
+      'type' => 'serial',
+      'not null' => TRUE,
+    ),
+    'title' => array(
+      'description' => 'Slider title',
+      'type' => 'varchar',
+      'length' => '64',
+      'not null' => TRUE,
+    ),
+    'settings' => array(
+      'description' => 'Slider settings',
+      'type' => 'blob',
+      'not null' => TRUE,
+    ),
+    'tid' => array(
+      'description' => 'Templates ID',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'weight' => array(
+      'description' => 'Slider weight',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+  ),
+  'primary key' => array('sid'),
+  );
+
+  $schema['d7slider_templates'] = array(
+  'description' => 'Templates table',
+  'fields' => array(
+    'tid' => array(
+      'description' => 'Templates ID',
+      'type' => 'serial',
+      'not null' => TRUE,
+    ),
+    'title' => array(
+      'description' => 'Templates title',
+      'type' => 'varchar',
+      'length' => '64',
+      'not null' => TRUE,
+    ),
+  ),
+  'primary key' => array('tid'),
+  );
+  
+  $schema['d7slider_pages'] = array(
+    'description' => 'Pages table',
+    'fields' => array(
+      'pid' => array(
+        'description' => 'Pages ID',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'description' => 'Pages title',
+        'type' => 'varchar',
+        'length' => '64',
+        'not null' => TRUE,
+      ),
+      'tid' => array(
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'weight' => array(
+        'description' => 'TODO: please describe this field!',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('pid'),
+  );
+
+  return $schema;
+
+}

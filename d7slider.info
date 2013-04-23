@@ -1,0 +1,6 @@
+name = D7 Slider
+description = slider for drupal 7
+core = 7.x
+version = 1.0-dev
+package = Karbunkul
+configure = admin/config/karbunkul/d7slider/settings
