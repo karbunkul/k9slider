@@ -59,6 +59,11 @@ function d7slider_schema(){
       'length' => '64',
       'not null' => TRUE,
     ),
+    'template' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'blob',
+      'not null' => TRUE,
+    ),
   ),
   'primary key' => array('tid'),
   );
