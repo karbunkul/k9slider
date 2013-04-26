@@ -13,8 +13,8 @@ function template_info($tid){
   ->fields('t', array('tid', 'title','template'))
   ->condition('tid', $tid)->execute()->fetchObject();
   $config = json_decode($info->template);
-  if ( is_object($config->template->schema) ){
-    dsm($config->template->schema);
+  if ( isset($config->template->schema) ){
+    //dsm($config->template->schema);
   }
   return $info;
 }

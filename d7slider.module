@@ -18,13 +18,13 @@ function d7slider_menu(){
     'title' => 'D7 slider',
     'description' => 'Slider for Drupal 7',
     'page callback' => 'page_sliders',
-    'access callback' => TRUE,
+    'access arguments' => array('d7slider administer access'),
     'type' => MENU_NORMAL_ITEM,
   );
   
   $items['admin/config/karbunkul/d7slider/default'] = array(
     'title' => t('Sliders'),
-    'access callback' => TRUE,
+    'access arguments' => array('d7slider administer access'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
@@ -43,7 +43,7 @@ function d7slider_menu(){
     'description' => '',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('d7slider_settings_form'),
-    'access callback' => TRUE,
+    'access arguments' => array('d7slider administer access'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
   );
@@ -51,10 +51,21 @@ function d7slider_menu(){
   $items['admin/config/karbunkul/d7slider/templates'] = array(
     'title' => t('Templates'),
     'type' => MENU_LOCAL_TASK,
-    'access callback' => TRUE,
+    'access arguments' => array('d7slider administer access'),
     'page callback' => 'page_templates',
     'weight' => 20,
   );
+  
+  $items['admin/config/karbunkul/d7slider/%/content'] = array(
+    'title' => t('Slides'),
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'access callback' => TRUE,
+    'page callback' => 'page_slides',
+    'weight' => 20,
+  );
+  
+  
+  
   
   return $items;
 }
@@ -265,5 +276,36 @@ function page_sliders(){
 }
 
 function page_templates(){
-  return 'templates';
+  $header = array(t('Title'), t('Actions'));
+  $rows = db_select('d7slider_templates', 't')->fields('t',array('tid','title'))->execute()->fetchAll();
+  foreach ($rows as $row) {
+    $items[] = array($row->title, '');
+  }
+  
+  $out['table'] = array(
+    '#type' => 'markup',
+    '#markup' => theme('table', array('header' => $header, 'rows' => $items )),
+    '#empty' => t('Your table is empty'),
+  );
+  return $out;
+}
+
+function page_slides(){
+  drupal_set_title(t('Content - ') . slider_info(arg(4))->title);
+  return 'Slides';
+}
+
+
+function d7slider_permission(){    
+$perm = array(
+  /*'d7slider view sliders page' => array(
+    'title' => t('View sliders page'),
+    'description' => t('View sliders page')
+  ),*/
+  'd7slider administer access' => array(
+    'title' => t('Administer sliders'),
+    'description' => t('Administer module D7Slider')
+  )
+);
+return $perm;
 }
